@@ -58,9 +58,9 @@ def roma_model(
     assert resolution[0] % 14 == 0, "Needs to be multiple of 14 for backbone"
     assert resolution[1] % 14 == 0, "Needs to be multiple of 14 for backbone"
 
-    logger.info(
-        f"Using coarse resolution {resolution}, and upsample res {upsample_res}"
-    )
+    # logger.info(
+    #     f"Using coarse resolution {resolution}, and upsample res {upsample_res}"
+    # )
 
     if sys.platform != "linux":
         use_custom_corr = False
