@@ -291,7 +291,7 @@ class GP(nn.Module):
     def forward(self, x, y, **kwargs):
         b, c, h1, w1 = x.shape
         b, c, h2, w2 = y.shape
-        f = self.get_pos_enc(y)
+        f = self.get_pos_enc(y).to(y)
         b, d, h2, w2 = f.shape
         x, y, f = self.reshape(x.float()), self.reshape(y.float()), self.reshape(f)
         # K_xx = self.K(x, x)
@@ -305,10 +305,9 @@ class GP(nn.Module):
         else:
             # faster inference, possibly also useful for training
             L_t = torch.linalg.cholesky(K_yy + sigma_noise)
-            pos_emb = torch.cholesky_solve(f.reshape(b, h2 * w2, d), L_t, upper=False)
+            pos_emb = torch.cholesky_solve(f.reshape(b, h2 * w2, d).float(), L_t.float(), upper=False).to(y)
             mu_x = K_xy @ pos_emb
         mu_x = rearrange(mu_x, "b (h w) d -> b d h w", h=h1, w=w1)
-
 
         # if not self.no_cov:
         #     cov_x = K_xx - K_xy.matmul(K_yy_inv.matmul(K_yx))
